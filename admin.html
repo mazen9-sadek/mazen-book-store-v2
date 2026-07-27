@@ -6,7 +6,7 @@
 
   <title>لوحة إدارة مكتبة مازن</title>
 
-  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/admin.css?v=3.1" />
 </head>
 <body>
 
@@ -15,8 +15,15 @@
     <h1>🔐 لوحة الإدارة</h1>
     <p>اكتب كلمة المرور للدخول</p>
 
-    <input id="adminPasswordInput" type="password" placeholder="كلمة المرور" />
-    <button onclick="loginAdmin()">دخول</button>
+    <input
+      id="adminPasswordInput"
+      type="password"
+      placeholder="كلمة المرور"
+    />
+
+    <button onclick="loginAdmin()">
+      دخول
+    </button>
 
     <p id="loginError"></p>
   </div>
@@ -29,7 +36,9 @@
       <p>متابعة الطلبات والإحصائيات وإدارة الكتب</p>
     </div>
 
-    <button onclick="logoutAdmin()">تسجيل خروج</button>
+    <button onclick="logoutAdmin()">
+      تسجيل خروج
+    </button>
   </header>
 
   <main class="admin-container">
@@ -72,26 +81,56 @@
       <h2>📚 إدارة الكتب</h2>
 
       <div class="book-form">
-        <input type="hidden" id="bookRowIndex" />
+        <input
+          type="hidden"
+          id="bookRowIndex"
+        />
 
         <select id="bookGrade">
           <option value="">اختر الصف</option>
         </select>
 
-        <input id="bookName" placeholder="اسم الكتاب" />
-        <input id="bookPrice" type="number" placeholder="السعر" />
-        <input id="bookImage" placeholder="رابط صورة الكتاب" />
+        <input
+          id="bookName"
+          placeholder="اسم الكتاب"
+        />
+
+        <input
+          id="bookPrice"
+          type="number"
+          placeholder="السعر"
+        />
+
+        <input
+          id="bookImage"
+          placeholder="رابط صورة الكتاب"
+        />
 
         <select id="bookAvailable">
           <option value="نعم">متاح</option>
           <option value="لا">غير متاح</option>
         </select>
 
-        <button onclick="saveBook()" id="saveBookBtn">إضافة كتاب</button>
-        <button onclick="resetBookForm()" class="secondary-btn">تفريغ النموذج</button>
+        <button
+          onclick="saveBook()"
+          id="saveBookBtn"
+        >
+          إضافة كتاب
+        </button>
+
+        <button
+          onclick="resetBookForm()"
+          class="secondary-btn"
+        >
+          تفريغ النموذج
+        </button>
       </div>
 
-      <input id="booksSearch" class="search" placeholder="بحث عن كتاب أو صف..." />
+      <input
+        id="booksSearch"
+        class="search"
+        placeholder="بحث عن كتاب أو صف..."
+      />
 
       <div class="table-wrapper">
         <table>
@@ -105,15 +144,34 @@
               <th>حذف</th>
             </tr>
           </thead>
+
           <tbody id="booksTable"></tbody>
         </table>
       </div>
     </div>
 
     <div class="panel">
-      <h2>آخر الطلبات</h2>
 
-      <input id="ordersSearch" class="search" placeholder="بحث باسم العميل أو رقم الطلب..." />
+      <div class="panel-title-row">
+        <div>
+          <h2>آخر الطلبات</h2>
+          <p>عرض الطلبات وتحميل نسخة احتياطية منها.</p>
+        </div>
+
+        <button
+          type="button"
+          class="export-btn"
+          onclick="exportOrdersToExcel()"
+        >
+          📊 تصدير الطلبات Excel
+        </button>
+      </div>
+
+      <input
+        id="ordersSearch"
+        class="search"
+        placeholder="بحث باسم العميل أو رقم الطلب..."
+      />
 
       <div class="table-wrapper">
         <table>
@@ -127,6 +185,7 @@
               <th>الحالة</th>
             </tr>
           </thead>
+
           <tbody id="ordersTable"></tbody>
         </table>
       </div>
@@ -135,10 +194,13 @@
   </main>
 </section>
 
-<script src="js/config.js?v=2.1"></script>
-<script src="js/api.js?v=2.1"></script>
-<script src="js/auth.js?v=2.1"></script>
-<script src="js/admin.js?v=2.1"></script>
+<!-- مكتبة إنشاء ملفات Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script src="js/config.js?v=3.1"></script>
+<script src="js/api.js?v=3.1"></script>
+<script src="js/auth.js?v=3.1"></script>
+<script src="js/admin.js?v=3.1"></script>
 
 </body>
 </html>
