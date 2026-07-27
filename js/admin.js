@@ -1,5 +1,13 @@
+// ===============================
+// متغيرات لوحة الإدارة
+// ===============================
+
 let dashboardData = null;
 let adminBooks = [];
+
+let dailySalesChartInstance = null;
+let monthlyOrdersChartInstance = null;
+let gradesDistributionChartInstance = null;
 
 const ORDER_STATUSES = [
   "جديد",
@@ -11,9 +19,14 @@ const ORDER_STATUSES = [
 
 document.addEventListener("DOMContentLoaded", initAdmin);
 
+
+// ===============================
+// تشغيل لوحة الإدارة
+// ===============================
+
 async function initAdmin() {
   if (isAdminLoggedIn()) {
-    showDashboard();
+    await showDashboard();
   }
 }
 
@@ -26,6 +39,38 @@ async function showDashboard() {
     .getElementById("dashboard")
     .classList.remove("hidden");
 
+  setupAdminEvents();
+
+  await loadAdminData();
+}
+
+function setupAdminEvents() {
+  const ordersSearch =
+    document.getElementById("ordersSearch");
+
+  if (ordersSearch && !ordersSearch.dataset.listenerAdded) {
+    ordersSearch.addEventListener(
+      "input",
+      renderOrders
+    );
+
+    ordersSearch.dataset.listenerAdded = "true";
+  }
+
+  const booksSearch =
+    document.getElementById("booksSearch");
+
+  if (booksSearch && !booksSearch.dataset.listenerAdded) {
+    booksSearch.addEventListener(
+      "input",
+      renderBooksTable
+    );
+
+    booksSearch.dataset.listenerAdded = "true";
+  }
+}
+
+async function loadAdminData() {
   dashboardData = await getDashboard();
   adminBooks = await getBooks();
 
@@ -34,41 +79,98 @@ async function showDashboard() {
     return;
   }
 
+  renderAllAdminData();
+}
+
+function renderAllAdminData() {
   renderStats();
+
   renderTopBooks();
   renderTopGrades();
+
   renderOrders();
 
   fillGradesSelect();
   renderBooksTable();
 
-  const ordersSearch =
-    document.getElementById("ordersSearch");
+  renderDashboardCharts();
+}
 
-  if (ordersSearch) {
-    ordersSearch.addEventListener(
-      "input",
-      renderOrders
-    );
+
+// ===============================
+// تحديث البيانات
+// ===============================
+
+async function refreshAdminDashboard() {
+  const refreshButton =
+    document.querySelector(".refresh-btn");
+
+  if (refreshButton) {
+    refreshButton.disabled = true;
+    refreshButton.textContent = "⏳ جاري التحديث...";
   }
 
-  const booksSearch =
-    document.getElementById("booksSearch");
+  try {
+    await loadAdminData();
+  } catch (error) {
+    console.error(error);
 
-  if (booksSearch) {
-    booksSearch.addEventListener(
-      "input",
-      renderBooksTable
-    );
+    alert("حدث خطأ أثناء تحديث البيانات");
+  } finally {
+    if (refreshButton) {
+      refreshButton.disabled = false;
+      refreshButton.textContent = "🔄 تحديث البيانات";
+    }
   }
 }
+
+
+// ===============================
+// التبويبات
+// ===============================
+
+function openAdminTab(tabName, clickedButton) {
+  document
+    .querySelectorAll(".admin-tab-content")
+    .forEach(section => {
+      section.classList.remove("active");
+    });
+
+  document
+    .querySelectorAll(".admin-tab")
+    .forEach(button => {
+      button.classList.remove("active");
+    });
+
+  const selectedTab =
+    document.getElementById(`${tabName}Tab`);
+
+  if (selectedTab) {
+    selectedTab.classList.add("active");
+  }
+
+  if (clickedButton) {
+    clickedButton.classList.add("active");
+  }
+
+  if (tabName === "overview") {
+    setTimeout(() => {
+      resizeDashboardCharts();
+    }, 150);
+  }
+}
+
+
+// ===============================
+// بطاقات الإحصائيات
+// ===============================
 
 function renderStats() {
   document.getElementById("totalOrders").textContent =
     dashboardData.totalOrders;
 
   document.getElementById("totalSales").textContent =
-    `${dashboardData.totalSales} جنيه`;
+    `${formatNumber(dashboardData.totalSales)} جنيه`;
 
   document.getElementById("totalBooks").textContent =
     dashboardData.totalBooks;
@@ -76,6 +178,15 @@ function renderStats() {
   document.getElementById("totalCustomers").textContent =
     dashboardData.totalCustomers;
 }
+
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString("ar-EG");
+}
+
+
+// ===============================
+// أكثر الكتب والصفوف
+// ===============================
 
 function renderTopBooks() {
   renderRankList(
@@ -94,6 +205,10 @@ function renderTopGrades() {
 function renderRankList(elementId, items) {
   const element =
     document.getElementById(elementId);
+
+  if (!element) {
+    return;
+  }
 
   if (!items || items.length === 0) {
     element.innerHTML =
@@ -118,10 +233,12 @@ function renderRankList(elementId, items) {
 
           <div class="rank-top">
             <strong>
-              ${index + 1}. ${item.name}
+              ${index + 1}. ${escapeHtml(item.name)}
             </strong>
 
-            <span>${item.count}</span>
+            <span>
+              ${formatNumber(item.count)}
+            </span>
           </div>
 
           <div class="bar">
@@ -134,9 +251,18 @@ function renderRankList(elementId, items) {
     .join("");
 }
 
+
+// ===============================
+// الطلبات
+// ===============================
+
 function renderOrders() {
   const tbody =
     document.getElementById("ordersTable");
+
+  if (!tbody || !dashboardData) {
+    return;
+  }
 
   const searchText =
     document
@@ -145,22 +271,33 @@ function renderOrders() {
       .trim()
       .toLowerCase() || "";
 
+  const statusFilter =
+    document
+      .getElementById("ordersStatusFilter")
+      ?.value || "";
+
   let orders =
     dashboardData.orders || [];
 
   if (searchText) {
     orders = orders.filter(order =>
-      String(order.orderNumber)
+      String(order.orderNumber || "")
         .toLowerCase()
         .includes(searchText) ||
 
-      String(order.name)
+      String(order.name || "")
         .toLowerCase()
         .includes(searchText) ||
 
-      String(order.phone)
+      String(order.phone || "")
         .toLowerCase()
         .includes(searchText)
+    );
+  }
+
+  if (statusFilter) {
+    orders = orders.filter(order =>
+      String(order.status || "") === statusFilter
     );
   }
 
@@ -168,7 +305,7 @@ function renderOrders() {
     tbody.innerHTML = `
       <tr>
         <td colspan="6">
-          لا توجد طلبات
+          لا توجد طلبات مطابقة
         </td>
       </tr>
     `;
@@ -180,21 +317,37 @@ function renderOrders() {
     .map(order => `
       <tr>
 
-        <td>${order.orderNumber}</td>
+        <td>
+          ${escapeHtml(order.orderNumber)}
+        </td>
 
-        <td>${order.date}</td>
+        <td>
+          ${escapeHtml(order.date)}
+        </td>
 
-        <td>${order.name}</td>
+        <td>
+          ${escapeHtml(order.name)}
+        </td>
 
-        <td>${order.phone}</td>
+        <td>
+          <a
+            href="https://wa.me/${normalizeWhatsAppNumber(order.phone)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ${escapeHtml(order.phone)}
+          </a>
+        </td>
 
-        <td>${order.total} جنيه</td>
+        <td>
+          ${formatNumber(order.total)} جنيه
+        </td>
 
         <td>
           <select
             class="status-select"
             onchange="changeOrderStatus(
-              '${order.orderNumber}',
+              '${escapeAttribute(order.orderNumber)}',
               this.value
             )"
           >
@@ -236,6 +389,7 @@ async function changeOrderStatus(
       "حدث خطأ أثناء تحديث الحالة"
     );
 
+    renderOrders();
     return;
   }
 
@@ -252,14 +406,545 @@ async function changeOrderStatus(
   alert("تم تحديث حالة الطلب ✅");
 }
 
-/* ===============================
-   تصدير الطلبات إلى Excel
-================================ */
+function normalizeWhatsAppNumber(phone) {
+  const digits =
+    String(phone || "")
+      .replace(/\D/g, "");
+
+  if (digits.startsWith("20")) {
+    return digits;
+  }
+
+  if (digits.startsWith("0")) {
+    return `20${digits.slice(1)}`;
+  }
+
+  return digits;
+}
+
+
+// ===============================
+// الرسوم البيانية
+// ===============================
+
+function renderDashboardCharts() {
+  if (typeof Chart === "undefined") {
+    console.warn("Chart.js لم يتم تحميلها");
+    return;
+  }
+
+  renderDailySalesChart();
+  renderMonthlyOrdersChart();
+  renderGradesDistributionChart();
+}
+
+function renderDailySalesChart() {
+  const canvas =
+    document.getElementById("dailySalesChart");
+
+  if (!canvas) {
+    return;
+  }
+
+  const dailyData =
+    buildDailySalesData(
+      dashboardData.orders || [],
+      7
+    );
+
+  if (dailySalesChartInstance) {
+    dailySalesChartInstance.destroy();
+  }
+
+  dailySalesChartInstance = new Chart(
+    canvas,
+    {
+      type: "line",
+
+      data: {
+        labels: dailyData.labels,
+
+        datasets: [
+          {
+            label: "المبيعات بالجنيه",
+            data: dailyData.values,
+            borderWidth: 3,
+            tension: 0.35,
+            fill: true
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom"
+          },
+
+          tooltip: {
+            callbacks: {
+              label(context) {
+                return `${formatNumber(context.raw)} جنيه`;
+              }
+            }
+          }
+        },
+
+        scales: {
+          y: {
+            beginAtZero: true,
+
+            ticks: {
+              callback(value) {
+                return formatNumber(value);
+              }
+            }
+          }
+        }
+      }
+    }
+  );
+}
+
+function renderMonthlyOrdersChart() {
+  const canvas =
+    document.getElementById("monthlyOrdersChart");
+
+  if (!canvas) {
+    return;
+  }
+
+  const monthlyData =
+    buildMonthlyOrdersData(
+      dashboardData.orders || [],
+      6
+    );
+
+  if (monthlyOrdersChartInstance) {
+    monthlyOrdersChartInstance.destroy();
+  }
+
+  monthlyOrdersChartInstance = new Chart(
+    canvas,
+    {
+      type: "bar",
+
+      data: {
+        labels: monthlyData.labels,
+
+        datasets: [
+          {
+            label: "عدد الطلبات",
+            data: monthlyData.values,
+            borderWidth: 1,
+            borderRadius: 8
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom"
+          }
+        },
+
+        scales: {
+          y: {
+            beginAtZero: true,
+
+            ticks: {
+              precision: 0
+            }
+          }
+        }
+      }
+    }
+  );
+}
+
+function renderGradesDistributionChart() {
+  const canvas =
+    document.getElementById("gradesDistributionChart");
+
+  if (!canvas) {
+    return;
+  }
+
+  const gradeData =
+    buildGradesDistributionData(
+      dashboardData.orders || []
+    );
+
+  if (gradesDistributionChartInstance) {
+    gradesDistributionChartInstance.destroy();
+  }
+
+  gradesDistributionChartInstance = new Chart(
+    canvas,
+    {
+      type: "doughnut",
+
+      data: {
+        labels: gradeData.labels,
+
+        datasets: [
+          {
+            label: "عدد الكتب المطلوبة",
+            data: gradeData.values,
+            borderWidth: 2
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+
+            labels: {
+              boxWidth: 15,
+              padding: 15
+            }
+          }
+        }
+      }
+    }
+  );
+}
+
+function resizeDashboardCharts() {
+  if (dailySalesChartInstance) {
+    dailySalesChartInstance.resize();
+  }
+
+  if (monthlyOrdersChartInstance) {
+    monthlyOrdersChartInstance.resize();
+  }
+
+  if (gradesDistributionChartInstance) {
+    gradesDistributionChartInstance.resize();
+  }
+}
+
+
+// ===============================
+// تجهيز بيانات المبيعات اليومية
+// ===============================
+
+function buildDailySalesData(orders, numberOfDays) {
+  const labels = [];
+  const values = [];
+  const totalsByDate = {};
+
+  orders.forEach(order => {
+    const dateKey =
+      extractDateKey(order.date);
+
+    if (!dateKey) {
+      return;
+    }
+
+    totalsByDate[dateKey] =
+      (totalsByDate[dateKey] || 0) +
+      (Number(order.total) || 0);
+  });
+
+  for (
+    let index = numberOfDays - 1;
+    index >= 0;
+    index--
+  ) {
+    const date = new Date();
+
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - index);
+
+    const dateKey =
+      formatDateKey(date);
+
+    labels.push(
+      date.toLocaleDateString(
+        "ar-EG",
+        {
+          day: "numeric",
+          month: "short"
+        }
+      )
+    );
+
+    values.push(
+      totalsByDate[dateKey] || 0
+    );
+  }
+
+  return {
+    labels,
+    values
+  };
+}
+
+
+// ===============================
+// تجهيز بيانات الطلبات الشهرية
+// ===============================
+
+function buildMonthlyOrdersData(
+  orders,
+  numberOfMonths
+) {
+  const labels = [];
+  const values = [];
+  const ordersByMonth = {};
+
+  orders.forEach(order => {
+    const date =
+      parseOrderDate(order.date);
+
+    if (!date) {
+      return;
+    }
+
+    const monthKey =
+      `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`;
+
+    ordersByMonth[monthKey] =
+      (ordersByMonth[monthKey] || 0) + 1;
+  });
+
+  for (
+    let index = numberOfMonths - 1;
+    index >= 0;
+    index--
+  ) {
+    const date = new Date();
+
+    date.setDate(1);
+    date.setMonth(
+      date.getMonth() - index
+    );
+
+    const monthKey =
+      `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`;
+
+    labels.push(
+      date.toLocaleDateString(
+        "ar-EG",
+        {
+          month: "long",
+          year: "numeric"
+        }
+      )
+    );
+
+    values.push(
+      ordersByMonth[monthKey] || 0
+    );
+  }
+
+  return {
+    labels,
+    values
+  };
+}
+
+
+// ===============================
+// تجهيز توزيع الطلبات حسب الصف
+// ===============================
+
+function buildGradesDistributionData(orders) {
+  const gradeStats = {};
+
+  orders.forEach(order => {
+    const items =
+      parseOrderItemsForCharts(
+        order.itemsText
+      );
+
+    items.forEach(item => {
+      const grade =
+        item.grade || "غير محدد";
+
+      const quantity =
+        Number(item.qty) || 1;
+
+      gradeStats[grade] =
+        (gradeStats[grade] || 0) +
+        quantity;
+    });
+  });
+
+  const sortedGrades =
+    Object.entries(gradeStats)
+      .sort((a, b) => b[1] - a[1]);
+
+  if (sortedGrades.length === 0) {
+    return {
+      labels: ["لا توجد بيانات"],
+      values: [1]
+    };
+  }
+
+  return {
+    labels: sortedGrades.map(
+      item => item[0]
+    ),
+
+    values: sortedGrades.map(
+      item => item[1]
+    )
+  };
+}
+
+function parseOrderItemsForCharts(itemsText) {
+  return String(itemsText || "")
+    .split("|")
+    .map(itemText => {
+      const text =
+        itemText.trim();
+
+      if (!text) {
+        return null;
+      }
+
+      const quantityMatch =
+        text.match(/×\s*(\d+)/);
+
+      const qty =
+        quantityMatch
+          ? Number(quantityMatch[1])
+          : 1;
+
+      const cleanText =
+        text
+          .replace(/×\s*\d+/, "")
+          .trim();
+
+      const separatorIndex =
+        cleanText.indexOf(" - ");
+
+      if (separatorIndex === -1) {
+        return {
+          grade: "غير محدد",
+          qty
+        };
+      }
+
+      return {
+        grade:
+          cleanText
+            .slice(0, separatorIndex)
+            .trim(),
+
+        qty
+      };
+    })
+    .filter(Boolean);
+}
+
+
+// ===============================
+// التعامل مع التاريخ
+// ===============================
+
+function extractDateKey(dateValue) {
+  const date =
+    parseOrderDate(dateValue);
+
+  if (!date) {
+    return "";
+  }
+
+  return formatDateKey(date);
+}
+
+function parseOrderDate(dateValue) {
+  const text =
+    String(dateValue || "").trim();
+
+  if (!text) {
+    return null;
+  }
+
+  const match =
+    text.match(
+      /^(\d{4})-(\d{2})-(\d{2})(?:\s+(\d{2}):(\d{2}))?/
+    );
+
+  if (!match) {
+    return null;
+  }
+
+  const year =
+    Number(match[1]);
+
+  const month =
+    Number(match[2]) - 1;
+
+  const day =
+    Number(match[3]);
+
+  const hour =
+    Number(match[4] || 0);
+
+  const minute =
+    Number(match[5] || 0);
+
+  const date =
+    new Date(
+      year,
+      month,
+      day,
+      hour,
+      minute
+    );
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+}
+
+function formatDateKey(date) {
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(date.getMonth() + 1)
+      .padStart(2, "0");
+
+  const day =
+    String(date.getDate())
+      .padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+
+// ===============================
+// تصدير الطلبات إلى Excel
+// ===============================
 
 function exportOrdersToExcel() {
-  if (
-    typeof XLSX === "undefined"
-  ) {
+  if (typeof XLSX === "undefined") {
     alert(
       "تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت ثم أعد تحميل الصفحة."
     );
@@ -277,54 +962,56 @@ function exportOrdersToExcel() {
     return;
   }
 
-  const orders =
-    dashboardData.orders;
-
   const excelRows =
-    orders.map((order, index) => ({
-      "م": index + 1,
+    dashboardData.orders.map(
+      (order, index) => ({
+        "م":
+          index + 1,
 
-      "رقم الطلب":
-        safeExcelText(
-          order.orderNumber
-        ),
+        "رقم الطلب":
+          safeExcelText(
+            order.orderNumber
+          ),
 
-      "التاريخ":
-        safeExcelText(
-          order.date
-        ),
+        "التاريخ":
+          safeExcelText(
+            order.date
+          ),
 
-      "اسم العميل":
-        safeExcelText(
-          order.name
-        ),
+        "اسم العميل":
+          safeExcelText(
+            order.name
+          ),
 
-      "رقم الواتساب":
-        safeExcelText(
-          order.phone
-        ),
+        "رقم الواتساب":
+          safeExcelText(
+            order.phone
+          ),
 
-      "محتويات الطلب":
-        safeExcelText(
-          order.itemsText
-        ),
+        "محتويات الطلب":
+          safeExcelText(
+            order.itemsText
+          ),
 
-      "الملاحظات":
-        safeExcelText(
-          order.notes
-        ),
+        "الملاحظات":
+          safeExcelText(
+            order.notes
+          ),
 
-      "الإجمالي بالجنيه":
-        Number(order.total) || 0,
+        "الإجمالي بالجنيه":
+          Number(order.total) || 0,
 
-      "حالة الطلب":
-        safeExcelText(
-          order.status
-        )
-    }));
+        "حالة الطلب":
+          safeExcelText(
+            order.status
+          )
+      })
+    );
 
   const worksheet =
-    XLSX.utils.json_to_sheet(excelRows);
+    XLSX.utils.json_to_sheet(
+      excelRows
+    );
 
   worksheet["!cols"] = [
     { wch: 7 },
@@ -378,10 +1065,6 @@ function safeExcelText(value) {
   let text =
     String(value || "").trim();
 
-  /*
-    منع Excel من اعتبار بيانات العميل
-    معادلات قابلة للتنفيذ.
-  */
   if (/^[=+\-@]/.test(text)) {
     text = "'" + text;
   }
@@ -390,7 +1073,8 @@ function safeExcelText(value) {
 }
 
 function getExportDate() {
-  const date = new Date();
+  const date =
+    new Date();
 
   const year =
     date.getFullYear();
@@ -406,13 +1090,21 @@ function getExportDate() {
   return `${year}-${month}-${day}`;
 }
 
-/* ===============================
-   قائمة الصفوف
-================================ */
+
+// ===============================
+// قائمة الصفوف
+// ===============================
 
 function fillGradesSelect() {
   const select =
     document.getElementById("bookGrade");
+
+  if (!select) {
+    return;
+  }
+
+  const currentValue =
+    select.value;
 
   select.innerHTML = `
     <option value="">
@@ -425,15 +1117,27 @@ function fillGradesSelect() {
       </option>
     `).join("")}
   `;
+
+  if (
+    currentValue &&
+    GRADES.includes(currentValue)
+  ) {
+    select.value = currentValue;
+  }
 }
 
-/* ===============================
-   جدول الكتب
-================================ */
+
+// ===============================
+// جدول الكتب
+// ===============================
 
 function renderBooksTable() {
   const tbody =
     document.getElementById("booksTable");
+
+  if (!tbody) {
+    return;
+  }
 
   const searchText =
     document
@@ -447,11 +1151,11 @@ function renderBooksTable() {
 
   if (searchText) {
     books = books.filter(book =>
-      String(book.name)
+      String(book.name || "")
         .toLowerCase()
         .includes(searchText) ||
 
-      String(book.grade)
+      String(book.grade || "")
         .toLowerCase()
         .includes(searchText)
     );
@@ -473,11 +1177,17 @@ function renderBooksTable() {
     .map(book => `
       <tr>
 
-        <td>${book.grade}</td>
+        <td>
+          ${escapeHtml(book.grade)}
+        </td>
 
-        <td>${book.name}</td>
+        <td>
+          ${escapeHtml(book.name)}
+        </td>
 
-        <td>${book.price} جنيه</td>
+        <td>
+          ${formatNumber(book.price)} جنيه
+        </td>
 
         <td>
           <span class="status">
@@ -516,9 +1226,10 @@ function renderBooksTable() {
     .join("");
 }
 
-/* ===============================
-   إضافة وتعديل الكتب
-================================ */
+
+// ===============================
+// إضافة وتعديل الكتب
+// ===============================
 
 async function saveBook() {
   const rowIndex =
@@ -592,7 +1303,8 @@ async function saveBook() {
 
   resetBookForm();
 
-  adminBooks = await getBooks();
+  adminBooks =
+    await getBooks();
 
   renderBooksTable();
 }
@@ -625,6 +1337,16 @@ function editBook(book) {
   document
     .getElementById("saveBookBtn")
     .textContent = "حفظ التعديل";
+
+  const booksTabButton =
+    document.querySelector(
+      '.admin-tab[data-tab="books"]'
+    );
+
+  openAdminTab(
+    "books",
+    booksTabButton
+  );
 
   document
     .getElementById("bookGrade")
@@ -664,9 +1386,10 @@ function resetBookForm() {
     .textContent = "إضافة كتاب";
 }
 
-/* ===============================
-   حذف الكتب
-================================ */
+
+// ===============================
+// حذف الكتب
+// ===============================
 
 async function removeBook(rowIndex) {
   const confirmDelete =
@@ -692,7 +1415,28 @@ async function removeBook(rowIndex) {
 
   alert("تم حذف الكتاب ✅");
 
-  adminBooks = await getBooks();
+  adminBooks =
+    await getBooks();
 
   renderBooksTable();
+}
+
+
+// ===============================
+// حماية النصوص المعروضة
+// ===============================
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function escapeAttribute(value) {
+  return String(value || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'");
 }

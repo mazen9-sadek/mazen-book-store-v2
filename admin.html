@@ -1,18 +1,36 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>لوحة إدارة مكتبة مازن</title>
 
-  <link rel="stylesheet" href="css/admin.css?v=3.1" />
+  <link
+    rel="stylesheet"
+    href="css/admin.css?v=4.0"
+  />
 </head>
+
 <body>
 
-<section id="loginScreen" class="login-screen">
+<!-- ===============================
+     شاشة تسجيل الدخول
+================================ -->
+
+<section
+  id="loginScreen"
+  class="login-screen"
+>
   <div class="login-card">
+
     <h1>🔐 لوحة الإدارة</h1>
+
     <p>اكتب كلمة المرور للدخول</p>
 
     <input
@@ -26,181 +44,531 @@
     </button>
 
     <p id="loginError"></p>
+
   </div>
 </section>
 
-<section id="dashboard" class="dashboard hidden">
+
+<!-- ===============================
+     لوحة الإدارة
+================================ -->
+
+<section
+  id="dashboard"
+  class="dashboard hidden"
+>
+
+  <!-- رأس لوحة الإدارة -->
+
   <header class="admin-header">
+
     <div>
       <h1>📊 لوحة تحكم مكتبة مازن</h1>
-      <p>متابعة الطلبات والإحصائيات وإدارة الكتب</p>
+
+      <p>
+        متابعة الطلبات والإحصائيات وإدارة الكتب
+      </p>
     </div>
 
-    <button onclick="logoutAdmin()">
-      تسجيل خروج
-    </button>
+    <div class="admin-header-actions">
+
+      <a
+        href="index.html"
+        class="header-link"
+      >
+        عرض الموقع
+      </a>
+
+      <button onclick="logoutAdmin()">
+        تسجيل خروج
+      </button>
+
+    </div>
+
   </header>
 
-  <main class="admin-container">
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span>عدد الطلبات</span>
-        <strong id="totalOrders">0</strong>
-      </div>
+  <!-- ===============================
+       تخطيط لوحة الإدارة
+  ================================ -->
 
-      <div class="stat-card">
-        <span>إجمالي المبيعات</span>
-        <strong id="totalSales">0 جنيه</strong>
-      </div>
+  <div class="admin-layout">
 
-      <div class="stat-card">
-        <span>عدد الكتب المطلوبة</span>
-        <strong id="totalBooks">0</strong>
-      </div>
+    <!-- القائمة الجانبية -->
 
-      <div class="stat-card">
-        <span>عدد العملاء</span>
-        <strong id="totalCustomers">0</strong>
-      </div>
-    </div>
+    <aside class="admin-sidebar">
 
-    <div class="charts-grid">
-      <div class="panel">
-        <h2>🔥 أكثر الكتب مبيعًا</h2>
-        <div id="topBooks"></div>
-      </div>
+      <div class="sidebar-brand">
+        <span class="sidebar-logo">م</span>
 
-      <div class="panel">
-        <h2>🏫 أكثر الصفوف طلبًا</h2>
-        <div id="topGrades"></div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>📚 إدارة الكتب</h2>
-
-      <div class="book-form">
-        <input
-          type="hidden"
-          id="bookRowIndex"
-        />
-
-        <select id="bookGrade">
-          <option value="">اختر الصف</option>
-        </select>
-
-        <input
-          id="bookName"
-          placeholder="اسم الكتاب"
-        />
-
-        <input
-          id="bookPrice"
-          type="number"
-          placeholder="السعر"
-        />
-
-        <input
-          id="bookImage"
-          placeholder="رابط صورة الكتاب"
-        />
-
-        <select id="bookAvailable">
-          <option value="نعم">متاح</option>
-          <option value="لا">غير متاح</option>
-        </select>
-
-        <button
-          onclick="saveBook()"
-          id="saveBookBtn"
-        >
-          إضافة كتاب
-        </button>
-
-        <button
-          onclick="resetBookForm()"
-          class="secondary-btn"
-        >
-          تفريغ النموذج
-        </button>
-      </div>
-
-      <input
-        id="booksSearch"
-        class="search"
-        placeholder="بحث عن كتاب أو صف..."
-      />
-
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>الصف</th>
-              <th>اسم الكتاب</th>
-              <th>السعر</th>
-              <th>الحالة</th>
-              <th>تعديل</th>
-              <th>حذف</th>
-            </tr>
-          </thead>
-
-          <tbody id="booksTable"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="panel">
-
-      <div class="panel-title-row">
         <div>
-          <h2>آخر الطلبات</h2>
-          <p>عرض الطلبات وتحميل نسخة احتياطية منها.</p>
+          <strong>مكتبة مازن</strong>
+          <small>لوحة الإدارة</small>
         </div>
+      </div>
+
+
+      <nav class="admin-tabs">
 
         <button
           type="button"
-          class="export-btn"
-          onclick="exportOrdersToExcel()"
+          class="admin-tab active"
+          data-tab="overview"
+          onclick="openAdminTab('overview', this)"
         >
-          📊 تصدير الطلبات Excel
+          <span>📊</span>
+          الرئيسية
         </button>
-      </div>
 
-      <input
-        id="ordersSearch"
-        class="search"
-        placeholder="بحث باسم العميل أو رقم الطلب..."
-      />
+        <button
+          type="button"
+          class="admin-tab"
+          data-tab="orders"
+          onclick="openAdminTab('orders', this)"
+        >
+          <span>📦</span>
+          الطلبات
+        </button>
 
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>رقم الطلب</th>
-              <th>التاريخ</th>
-              <th>الاسم</th>
-              <th>الواتساب</th>
-              <th>الإجمالي</th>
-              <th>الحالة</th>
-            </tr>
-          </thead>
+        <button
+          type="button"
+          class="admin-tab"
+          data-tab="books"
+          onclick="openAdminTab('books', this)"
+        >
+          <span>📚</span>
+          الكتب
+        </button>
 
-          <tbody id="ordersTable"></tbody>
-        </table>
-      </div>
-    </div>
+      </nav>
 
-  </main>
+    </aside>
+
+
+    <!-- محتوى لوحة الإدارة -->
+
+    <main class="admin-container">
+
+
+      <!-- ===============================
+           تبويب الرئيسية والإحصائيات
+      ================================ -->
+
+      <section
+        id="overviewTab"
+        class="admin-tab-content active"
+      >
+
+        <div class="page-heading">
+
+          <div>
+            <h2>نظرة عامة</h2>
+
+            <p>
+              ملخص أداء المكتبة والطلبات والمبيعات.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="refresh-btn"
+            onclick="refreshAdminDashboard()"
+          >
+            🔄 تحديث البيانات
+          </button>
+
+        </div>
+
+
+        <!-- بطاقات الإحصائيات -->
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+            <span class="stat-icon">📦</span>
+
+            <div>
+              <span>عدد الطلبات</span>
+              <strong id="totalOrders">0</strong>
+            </div>
+          </div>
+
+
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+
+            <div>
+              <span>إجمالي المبيعات</span>
+              <strong id="totalSales">0 جنيه</strong>
+            </div>
+          </div>
+
+
+          <div class="stat-card">
+            <span class="stat-icon">📚</span>
+
+            <div>
+              <span>عدد الكتب المطلوبة</span>
+              <strong id="totalBooks">0</strong>
+            </div>
+          </div>
+
+
+          <div class="stat-card">
+            <span class="stat-icon">👥</span>
+
+            <div>
+              <span>عدد العملاء</span>
+              <strong id="totalCustomers">0</strong>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- الرسوم البيانية -->
+
+        <div class="dashboard-charts-grid">
+
+          <div class="panel chart-panel">
+
+            <div class="chart-heading">
+              <div>
+                <h2>📈 المبيعات اليومية</h2>
+                <p>إجمالي المبيعات خلال آخر الأيام.</p>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="dailySalesChart"></canvas>
+            </div>
+
+          </div>
+
+
+          <div class="panel chart-panel">
+
+            <div class="chart-heading">
+              <div>
+                <h2>📊 الطلبات الشهرية</h2>
+                <p>عدد الطلبات في كل شهر.</p>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="monthlyOrdersChart"></canvas>
+            </div>
+
+          </div>
+
+
+          <div class="panel chart-panel">
+
+            <div class="chart-heading">
+              <div>
+                <h2>🥧 توزيع الطلبات حسب الصف</h2>
+                <p>الصفوف الأكثر طلبًا.</p>
+              </div>
+            </div>
+
+            <div class="chart-container pie-chart-container">
+              <canvas id="gradesDistributionChart"></canvas>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- أفضل الكتب والصفوف -->
+
+        <div class="charts-grid">
+
+          <div class="panel">
+            <h2>🔥 أكثر الكتب مبيعًا</h2>
+            <div id="topBooks"></div>
+          </div>
+
+
+          <div class="panel">
+            <h2>🏫 أكثر الصفوف طلبًا</h2>
+            <div id="topGrades"></div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===============================
+           تبويب الطلبات
+      ================================ -->
+
+      <section
+        id="ordersTab"
+        class="admin-tab-content"
+      >
+
+        <div class="page-heading">
+
+          <div>
+            <h2>📦 إدارة الطلبات</h2>
+
+            <p>
+              البحث في الطلبات وتحديث حالتها وتصدير نسخة Excel.
+            </p>
+          </div>
+
+
+          <button
+            type="button"
+            class="export-btn"
+            onclick="exportOrdersToExcel()"
+          >
+            📊 تصدير الطلبات Excel
+          </button>
+
+        </div>
+
+
+        <div class="panel">
+
+          <div class="orders-tools">
+
+            <input
+              id="ordersSearch"
+              class="search"
+              placeholder="بحث باسم العميل أو رقم الطلب أو الواتساب..."
+            />
+
+
+            <select
+              id="ordersStatusFilter"
+              class="filter-select"
+              onchange="renderOrders()"
+            >
+              <option value="">
+                كل الحالات
+              </option>
+
+              <option value="جديد">
+                جديد
+              </option>
+
+              <option value="جاري التجهيز">
+                جاري التجهيز
+              </option>
+
+              <option value="جاهز">
+                جاهز
+              </option>
+
+              <option value="تم التسليم">
+                تم التسليم
+              </option>
+
+              <option value="ملغي">
+                ملغي
+              </option>
+            </select>
+
+          </div>
+
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>رقم الطلب</th>
+                  <th>التاريخ</th>
+                  <th>الاسم</th>
+                  <th>الواتساب</th>
+                  <th>الإجمالي</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+
+              <tbody id="ordersTable"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ===============================
+           تبويب الكتب
+      ================================ -->
+
+      <section
+        id="booksTab"
+        class="admin-tab-content"
+      >
+
+        <div class="page-heading">
+
+          <div>
+            <h2>📚 إدارة الكتب</h2>
+
+            <p>
+              إضافة الكتب وتعديل الأسعار وحالة التوفر.
+            </p>
+          </div>
+
+        </div>
+
+
+        <!-- نموذج إضافة وتعديل الكتب -->
+
+        <div class="panel">
+
+          <h2>إضافة أو تعديل كتاب</h2>
+
+          <div class="book-form">
+
+            <input
+              type="hidden"
+              id="bookRowIndex"
+            />
+
+
+            <select id="bookGrade">
+              <option value="">
+                اختر الصف
+              </option>
+            </select>
+
+
+            <input
+              id="bookName"
+              placeholder="اسم الكتاب"
+            />
+
+
+            <input
+              id="bookPrice"
+              type="number"
+              placeholder="السعر"
+            />
+
+
+            <input
+              id="bookImage"
+              placeholder="رابط صورة الكتاب"
+            />
+
+
+            <select id="bookAvailable">
+
+              <option value="نعم">
+                متاح
+              </option>
+
+              <option value="لا">
+                غير متاح
+              </option>
+
+            </select>
+
+
+            <button
+              onclick="saveBook()"
+              id="saveBookBtn"
+            >
+              إضافة كتاب
+            </button>
+
+
+            <button
+              onclick="resetBookForm()"
+              class="secondary-btn"
+            >
+              تفريغ النموذج
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- جدول الكتب -->
+
+        <div class="panel">
+
+          <div class="panel-title-row">
+
+            <div>
+              <h2>قائمة الكتب</h2>
+
+              <p>
+                البحث والتعديل والحذف.
+              </p>
+            </div>
+
+          </div>
+
+
+          <input
+            id="booksSearch"
+            class="search"
+            placeholder="بحث عن كتاب أو صف..."
+          />
+
+
+          <div class="table-wrapper">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>الصف</th>
+                  <th>اسم الكتاب</th>
+                  <th>السعر</th>
+                  <th>الحالة</th>
+                  <th>تعديل</th>
+                  <th>حذف</th>
+                </tr>
+              </thead>
+
+              <tbody id="booksTable"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
 </section>
 
+
 <!-- مكتبة إنشاء ملفات Excel -->
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-<script src="js/config.js?v=3.1"></script>
-<script src="js/api.js?v=3.1"></script>
-<script src="js/auth.js?v=3.1"></script>
-<script src="js/admin.js?v=3.1"></script>
+
+<!-- مكتبة الرسوم البيانية -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- ملفات المشروع -->
+
+<script src="js/config.js?v=4.0"></script>
+<script src="js/api.js?v=4.0"></script>
+<script src="js/auth.js?v=4.0"></script>
+<script src="js/admin.js?v=4.0"></script>
 
 </body>
+
 </html>
