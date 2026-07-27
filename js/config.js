@@ -4,7 +4,7 @@
 
 // رابط Google Apps Script Web App
 // هنحط الرابط الجديد بعد ما نعمل Apps Script الجديد
-const API_URL = "https://script.google.com/macros/s/AKfycbznsA7pNX6Qpp6pF8pWkXvmNQmhLCu2N4CYdNq9-_VRZ3Dy9c2YB_-O1TpEF4f0LBuQ6Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzahJzS_PRNkLilSs54R72dAf_9gGP8Mm22D117Yoczq5fHykMSTkvRkZY9aC_ggvw1qA/exec";
 
 // بيانات افتراضية للمكتبة
 // لو Google Sheets اشتغل، البيانات دي هتتبدل تلقائيًا من شيت Settings
