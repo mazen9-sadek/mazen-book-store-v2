@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="تتبع طلبك ومعرفة محتوياته وحالته في مكتبة مازن"
+  >
+
+  <title>تتبع الطلب | مكتبة مازن</title>
+
+  <link rel="stylesheet" href="css/style.css?v=3.0">
+</head>
+
+<body>
+
+  <!-- ===============================
+       رأس الصفحة
+  ================================ -->
+
+  <header class="main-header">
+    <div class="container header-content">
+
+      <a href="index.html" class="logo">
+        📚
+        <span id="libraryName">مكتبة مازن</span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="index.html">الرئيسية</a>
+        <a href="index.html#grades">الصفوف</a>
+        <a href="track.html" class="active">تتبع طلبي</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <!-- ===============================
+       قسم تتبع الطلب
+  ================================ -->
+
+  <main class="track-page">
+
+    <section class="track-hero">
+
+      <div class="container">
+
+        <div class="track-heading">
+          <div class="track-icon">🔎</div>
+
+          <h1>تتبع طلبك</h1>
+
+          <p>
+            اكتب رقم الطلب ورقم الواتساب المستخدم عند الطلب
+            لعرض محتويات الطلب وحالته.
+          </p>
+        </div>
+
+
+        <div class="track-card">
+
+          <form id="trackForm" class="track-form">
+
+            <div class="form-group">
+              <label for="orderNumber">
+                رقم الطلب
+              </label>
+
+              <input
+                type="text"
+                id="orderNumber"
+                name="orderNumber"
+                placeholder="مثال: MZN-1001"
+                autocomplete="off"
+                required
+              >
+
+              <small>
+                ستجد رقم الطلب في الرسالة التي ظهرت بعد إرسال الطلب.
+              </small>
+            </div>
+
+
+            <div class="form-group">
+              <label for="orderPhone">
+                رقم الواتساب
+              </label>
+
+              <input
+                type="tel"
+                id="orderPhone"
+                name="orderPhone"
+                placeholder="مثال: 01554596691"
+                inputmode="numeric"
+                autocomplete="tel"
+                required
+              >
+
+              <small>
+                اكتب نفس الرقم الذي استخدمته عند إنشاء الطلب.
+              </small>
+            </div>
+
+
+            <button
+              type="submit"
+              id="trackButton"
+              class="track-button"
+            >
+              <span>عرض تفاصيل الطلب</span>
+              <span>←</span>
+            </button>
+
+          </form>
+
+
+          <div
+            id="trackMessage"
+            class="track-message"
+            aria-live="polite"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ===============================
+         نتيجة الطلب
+    ================================ -->
+
+    <section
+      id="orderResultSection"
+      class="order-result-section hidden"
+    >
+
+      <div class="container">
+
+        <div id="orderResult" class="order-result"></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ===============================
+       تذييل الصفحة
+  ================================ -->
+
+  <footer class="main-footer">
+
+    <div class="container footer-content">
+
+      <div>
+        <strong id="footerLibraryName">
+          مكتبة مازن
+        </strong>
+
+        <p>
+          اطلب كتبك الدراسية وتابع طلبك بسهولة.
+        </p>
+      </div>
+
+
+      <div class="footer-links">
+        <a href="index.html">الرئيسية</a>
+        <a href="track.html">تتبع الطلب</a>
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- ===============================
+       ملفات JavaScript
+  ================================ -->
+
+  <script src="js/config.js?v=3.0"></script>
+  <script src="js/api.js?v=3.0"></script>
+  <script src="js/track.js?v=3.0"></script>
+
+</body>
+
+</html>

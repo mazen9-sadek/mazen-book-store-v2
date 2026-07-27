@@ -6,13 +6,14 @@
 
   <title>مكتبة مازن | طلب الكتب الدراسية</title>
 
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=3.0" />
 </head>
 <body>
 
 <header class="topbar">
   <div class="brand">
     <div class="logo">م</div>
+
     <div>
       <h1 id="libraryName">مكتبة مازن</h1>
       <p>طلب الكتب الدراسية أونلاين</p>
@@ -21,6 +22,7 @@
 
   <nav class="nav">
     <a href="#grades">الصفوف</a>
+    <a href="track.html">تتبع طلبي</a>
     <a href="#contact">تواصل معنا</a>
     <a href="admin.html">لوحة الإدارة</a>
   </nav>
@@ -43,7 +45,19 @@
 
     <div class="hero-actions">
       <a href="#grades" class="primary-btn">ابدأ التسوق</a>
-      <a id="whatsappHero" class="whatsapp-btn" target="_blank">تواصل واتساب</a>
+
+      <a href="track.html" class="primary-btn">
+        🔎 تتبع طلبي
+      </a>
+
+      <a
+        id="whatsappHero"
+        class="whatsapp-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        تواصل واتساب
+      </a>
     </div>
 
     <div class="info-row">
@@ -54,15 +68,27 @@
 
       <div>
         <strong>🕛 مواعيد العمل</strong>
-        <span id="workingHours">يوميًا من 12 صباحًا إلى 12 مساءً</span>
+        <span id="workingHours">
+          يوميًا من 12 صباحًا إلى 12 مساءً
+        </span>
       </div>
     </div>
   </div>
 
   <div class="hero-card">
     <h3>فاتورة احترافية</h3>
+
     <p>كل طلب يحصل على رقم خاص مثل:</p>
+
     <strong>MZN-1001</strong>
+
+    <p>
+      احتفظ برقم الطلب حتى تقدر تتابع محتوياته وحالته.
+    </p>
+
+    <a href="track.html" class="primary-btn">
+      تتبع طلبك
+    </a>
   </div>
 </section>
 
@@ -71,7 +97,10 @@
   <section id="grades" class="section">
     <div class="section-title">
       <h2>اختر الصف الدراسي</h2>
-      <p>من أولى ابتدائي حتى ثالثة إعدادي</p>
+
+      <p>
+        من الصف الأول الابتدائي حتى الصف الثالث الثانوي
+      </p>
     </div>
 
     <div id="gradesGrid" class="grades-grid"></div>
@@ -84,7 +113,11 @@
     </div>
 
     <div class="search-box">
-      <input id="searchInput" type="text" placeholder="🔍 ابحث عن كتاب..." />
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="🔍 ابحث عن كتاب..."
+      />
     </div>
 
     <div id="booksGrid" class="books-grid"></div>
@@ -93,11 +126,22 @@
   <section id="contact" class="contact-section">
     <div>
       <h2>تواصل معنا</h2>
-      <p id="address">مجاورة 27 أمام ناصية المصانع</p>
-      <p id="hoursText">يوميًا من 12 صباحًا إلى 12 مساءً</p>
+
+      <p id="address">
+        مجاورة 27 أمام ناصية المصانع
+      </p>
+
+      <p id="hoursText">
+        يوميًا من 12 صباحًا إلى 12 مساءً
+      </p>
     </div>
 
-    <a id="whatsappContact" class="whatsapp-big" target="_blank">
+    <a
+      id="whatsappContact"
+      class="whatsapp-big"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       تواصل واتساب
     </a>
   </section>
@@ -107,6 +151,7 @@
 <aside id="cartDrawer" class="cart-drawer">
   <div class="cart-header">
     <h2>🛒 سلة المشتريات</h2>
+
     <button onclick="closeCart()">×</button>
   </div>
 
@@ -118,37 +163,69 @@
       <strong id="cartTotal">0 جنيه</strong>
     </div>
 
-    <button class="clear-btn" onclick="clearCart()">إفراغ السلة</button>
-    <button class="checkout-btn" onclick="openCheckout()">إتمام الطلب</button>
+    <button class="clear-btn" onclick="clearCart()">
+      إفراغ السلة
+    </button>
+
+    <button class="checkout-btn" onclick="openCheckout()">
+      إتمام الطلب
+    </button>
   </div>
 </aside>
 
-<div id="overlay" class="overlay" onclick="closeCart()"></div>
+<div
+  id="overlay"
+  class="overlay"
+  onclick="closeCart()"
+></div>
 
 <div id="checkoutModal" class="modal">
   <div class="modal-content">
-    <button class="modal-close" onclick="closeCheckout()">×</button>
+    <button
+      class="modal-close"
+      onclick="closeCheckout()"
+    >
+      ×
+    </button>
 
     <h2>إتمام الطلب</h2>
 
-    <input id="customerName" placeholder="اسم العميل" />
-    <input id="customerPhone" placeholder="رقم الواتساب" />
-    <textarea id="customerNotes" placeholder="ملاحظات"></textarea>
+    <input
+      id="customerName"
+      placeholder="اسم العميل"
+    />
+
+    <input
+      id="customerPhone"
+      placeholder="رقم الواتساب"
+      type="tel"
+      inputmode="numeric"
+    />
+
+    <textarea
+      id="customerNotes"
+      placeholder="ملاحظات"
+    ></textarea>
 
     <p class="notice">
       ⏳ مدة تجهيز الطلب من 10 إلى 15 يوم، وسيتم التواصل معكم عند جاهزية الطلب.
     </p>
 
-    <button class="checkout-btn" onclick="submitOrder()">تأكيد الطلب</button>
+    <button
+      class="checkout-btn"
+      onclick="submitOrder()"
+    >
+      تأكيد الطلب
+    </button>
 
     <div id="orderResult"></div>
   </div>
 </div>
 
-<script src="js/config.js?v=2.1"></script>
-<script src="js/api.js?v=2.1"></script>
-<script src="js/cart.js?v=2.1"></script>
-<script src="js/app.js?v=2.1"></script>
+<script src="js/config.js?v=3.0"></script>
+<script src="js/api.js?v=3.0"></script>
+<script src="js/cart.js?v=3.0"></script>
+<script src="js/app.js?v=3.0"></script>
 
 </body>
 </html>
