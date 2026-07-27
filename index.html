@@ -1,177 +1,665 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="description"
+    content="اطلب الكتب الدراسية لجميع الصفوف من مكتبة مازن وتابع طلبك بسهولة."
+  />
 
   <title>مكتبة مازن | طلب الكتب الدراسية</title>
 
-  <link rel="stylesheet" href="css/style.css?v=3.0" />
+  <link
+    rel="stylesheet"
+    href="css/style.css?v=5.0"
+  />
 </head>
+
 <body>
 
+<!-- ===============================
+     رأس الموقع
+================================ -->
+
 <header class="topbar">
+
   <div class="brand">
-    <div class="logo">م</div>
+
+    <div class="logo">
+      م
+    </div>
 
     <div>
-      <h1 id="libraryName">مكتبة مازن</h1>
-      <p>طلب الكتب الدراسية أونلاين</p>
-    </div>
-  </div>
-
-  <nav class="nav">
-    <a href="#grades">الصفوف</a>
-    <a href="track.html">تتبع طلبي</a>
-    <a href="#contact">تواصل معنا</a>
-    <a href="admin.html">لوحة الإدارة</a>
-  </nav>
-
-  <button class="cart-btn" onclick="openCart()">
-    🛒 السلة
-    <span id="cartCount">0</span>
-  </button>
-</header>
-
-<section class="hero">
-  <div class="hero-text">
-    <span class="badge">📚 كتب مدرسية لكل الصفوف</span>
-
-    <h2>اطلب كتبك بسهولة من مكتبة مازن</h2>
-
-    <p>
-      اختار الصف، أضف الكتب للسلة، وسيتم التواصل معك عند جاهزية الطلب.
-    </p>
-
-    <div class="hero-actions">
-      <a href="#grades" class="primary-btn">ابدأ التسوق</a>
-
-      <a href="track.html" class="primary-btn">
-        🔎 تتبع طلبي
-      </a>
-
-      <a
-        id="whatsappHero"
-        class="whatsapp-btn"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        تواصل واتساب
-      </a>
-    </div>
-
-    <div class="info-row">
-      <div>
-        <strong>⏳ مدة التجهيز</strong>
-        <span>10 إلى 15 يوم</span>
-      </div>
-
-      <div>
-        <strong>🕛 مواعيد العمل</strong>
-        <span id="workingHours">
-          يوميًا من 12 صباحًا إلى 12 مساءً
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-card">
-    <h3>فاتورة احترافية</h3>
-
-    <p>كل طلب يحصل على رقم خاص مثل:</p>
-
-    <strong>MZN-1001</strong>
-
-    <p>
-      احتفظ برقم الطلب حتى تقدر تتابع محتوياته وحالته.
-    </p>
-
-    <a href="track.html" class="primary-btn">
-      تتبع طلبك
-    </a>
-  </div>
-</section>
-
-<main class="container">
-
-  <section id="grades" class="section">
-    <div class="section-title">
-      <h2>اختر الصف الدراسي</h2>
+      <h1 id="libraryName">
+        مكتبة مازن
+      </h1>
 
       <p>
-        من الصف الأول الابتدائي حتى الصف الثالث الثانوي
+        طلب الكتب الدراسية أونلاين
       </p>
     </div>
 
-    <div id="gradesGrid" class="grades-grid"></div>
-  </section>
+  </div>
 
-  <section class="section">
-    <div class="section-title">
-      <h2 id="booksTitle">الكتب المتاحة</h2>
-      <p>اختر الصف أولًا لعرض الكتب</p>
-    </div>
 
-    <div class="search-box">
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="🔍 ابحث عن كتاب..."
-      />
-    </div>
+  <nav class="nav site-tabs">
 
-    <div id="booksGrid" class="books-grid"></div>
-  </section>
-
-  <section id="contact" class="contact-section">
-    <div>
-      <h2>تواصل معنا</h2>
-
-      <p id="address">
-        مجاورة 27 أمام ناصية المصانع
-      </p>
-
-      <p id="hoursText">
-        يوميًا من 12 صباحًا إلى 12 مساءً
-      </p>
-    </div>
-
-    <a
-      id="whatsappContact"
-      class="whatsapp-big"
-      target="_blank"
-      rel="noopener noreferrer"
+    <button
+      type="button"
+      class="site-tab active"
+      data-tab="home"
+      onclick="openSiteTab('home', this)"
     >
-      تواصل واتساب
+      🏠 الرئيسية
+    </button>
+
+
+    <button
+      type="button"
+      class="site-tab"
+      data-tab="books"
+      onclick="openSiteTab('books', this)"
+    >
+      📚 الكتب والصفوف
+    </button>
+
+
+    <a href="track.html">
+      🔎 تتبع طلبي
     </a>
+
+
+    <button
+      type="button"
+      class="site-tab"
+      data-tab="contact"
+      onclick="openSiteTab('contact', this)"
+    >
+      📞 تواصل معنا
+    </button>
+
+
+    <a href="admin.html">
+      ⚙️ لوحة الإدارة
+    </a>
+
+  </nav>
+
+
+  <button
+    type="button"
+    class="cart-btn"
+    onclick="openCart()"
+  >
+    🛒 السلة
+
+    <span id="cartCount">
+      0
+    </span>
+  </button>
+
+</header>
+
+
+<!-- ===============================
+     محتوى الموقع
+================================ -->
+
+<main class="site-main">
+
+
+  <!-- ===============================
+       تبويب الرئيسية
+  ================================ -->
+
+  <section
+    id="homeTab"
+    class="site-tab-content active"
+  >
+
+    <section class="hero">
+
+      <div class="hero-text">
+
+        <span class="badge">
+          📚 كتب مدرسية لكل الصفوف
+        </span>
+
+
+        <h2>
+          اطلب كتبك بسهولة من مكتبة مازن
+        </h2>
+
+
+        <p>
+          اختار الصف، أضف الكتب للسلة، وسيتم التواصل معك عند جاهزية الطلب.
+        </p>
+
+
+        <div class="hero-actions">
+
+          <button
+            type="button"
+            class="primary-btn"
+            onclick="openSiteTabByName('books')"
+          >
+            ابدأ التسوق
+          </button>
+
+
+          <a
+            href="track.html"
+            class="primary-btn"
+          >
+            🔎 تتبع طلبي
+          </a>
+
+
+          <a
+            id="whatsappHero"
+            class="whatsapp-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            تواصل واتساب
+          </a>
+
+        </div>
+
+
+        <div class="info-row">
+
+          <div>
+            <strong>
+              ⏳ مدة التجهيز
+            </strong>
+
+            <span>
+              10 إلى 15 يوم
+            </span>
+          </div>
+
+
+          <div>
+            <strong>
+              🕛 مواعيد العمل
+            </strong>
+
+            <span id="workingHours">
+              يوميًا من 12 صباحًا إلى 12 مساءً
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="hero-card">
+
+        <div class="hero-card-icon">
+          🧾
+        </div>
+
+        <h3>
+          رقم خاص لكل طلب
+        </h3>
+
+        <p>
+          كل طلب يحصل على رقم خاص مثل:
+        </p>
+
+        <strong>
+          MZN-1001
+        </strong>
+
+        <p>
+          احتفظ برقم الطلب حتى تقدر تتابع محتوياته وحالته.
+        </p>
+
+        <a
+          href="track.html"
+          class="primary-btn"
+        >
+          تتبع طلبك
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- مميزات الموقع -->
+
+    <section class="container home-features">
+
+      <div class="section-title">
+        <h2>
+          اطلب كتبك في خطوات بسيطة
+        </h2>
+
+        <p>
+          اختر الكتب وأرسل الطلب وتابع حالته من الموقع.
+        </p>
+      </div>
+
+
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <span>1</span>
+          <div class="feature-icon">🏫</div>
+          <h3>اختر الصف</h3>
+          <p>
+            اختر المرحلة والصف الدراسي المطلوب.
+          </p>
+        </div>
+
+
+        <div class="feature-card">
+          <span>2</span>
+          <div class="feature-icon">📚</div>
+          <h3>أضف الكتب</h3>
+          <p>
+            اختر الكتب المطلوبة وأضفها إلى السلة.
+          </p>
+        </div>
+
+
+        <div class="feature-card">
+          <span>3</span>
+          <div class="feature-icon">🧾</div>
+          <h3>أرسل الطلب</h3>
+          <p>
+            اكتب بياناتك واحصل على رقم طلب خاص.
+          </p>
+        </div>
+
+
+        <div class="feature-card">
+          <span>4</span>
+          <div class="feature-icon">🔎</div>
+          <h3>تابع طلبك</h3>
+          <p>
+            اعرف محتويات الطلب وحالته في أي وقت.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="home-action">
+
+        <button
+          type="button"
+          class="primary-btn"
+          onclick="openSiteTabByName('books')"
+        >
+          📚 تصفح الكتب الآن
+        </button>
+
+      </div>
+
+    </section>
+
+  </section>
+
+
+  <!-- ===============================
+       تبويب الكتب والصفوف
+  ================================ -->
+
+  <section
+    id="booksTab"
+    class="site-tab-content"
+  >
+
+    <div class="container books-page">
+
+      <div class="page-heading">
+
+        <div>
+          <span class="page-badge">
+            📚 متجر الكتب
+          </span>
+
+          <h2>
+            اختر المرحلة والصف الدراسي
+          </h2>
+
+          <p>
+            ابحث عن الكتاب أو اختر الصف لعرض الكتب المتاحة.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- تبويبات المراحل -->
+
+      <div class="stage-tabs">
+
+        <button
+          type="button"
+          class="stage-tab active"
+          data-stage="all"
+          onclick="selectStage('all', this)"
+        >
+          📚 كل الصفوف
+        </button>
+
+
+        <button
+          type="button"
+          class="stage-tab"
+          data-stage="primary"
+          onclick="selectStage('primary', this)"
+        >
+          🟢 ابتدائي
+        </button>
+
+
+        <button
+          type="button"
+          class="stage-tab"
+          data-stage="preparatory"
+          onclick="selectStage('preparatory', this)"
+        >
+          🔵 إعدادي
+        </button>
+
+
+        <button
+          type="button"
+          class="stage-tab"
+          data-stage="secondary"
+          onclick="selectStage('secondary', this)"
+        >
+          🟣 ثانوي
+        </button>
+
+      </div>
+
+
+      <!-- الصفوف -->
+
+      <section
+        id="grades"
+        class="section grades-section"
+      >
+
+        <div class="section-title">
+
+          <h2>
+            اختر الصف الدراسي
+          </h2>
+
+          <p>
+            من الصف الأول الابتدائي حتى الصف الثالث الثانوي
+          </p>
+
+        </div>
+
+
+        <div
+          id="gradesGrid"
+          class="grades-grid"
+        ></div>
+
+      </section>
+
+
+      <!-- الكتب -->
+
+      <section class="section books-section">
+
+        <div class="books-toolbar">
+
+          <div class="section-title books-section-title">
+
+            <h2 id="booksTitle">
+              الكتب المتاحة
+            </h2>
+
+            <p id="booksSubtitle">
+              يمكنك البحث مباشرة أو اختيار صف دراسي.
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            id="clearGradeButton"
+            class="clear-filter-btn hidden"
+            onclick="clearSelectedGrade()"
+          >
+            × إلغاء اختيار الصف
+          </button>
+
+        </div>
+
+
+        <div class="search-box">
+
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="🔍 ابحث مثلًا: رياضيات أولى ثانوي"
+            autocomplete="off"
+          />
+
+        </div>
+
+
+        <div
+          id="booksGrid"
+          class="books-grid"
+        ></div>
+
+      </section>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===============================
+       تبويب التواصل
+  ================================ -->
+
+  <section
+    id="contactTab"
+    class="site-tab-content"
+  >
+
+    <div class="container contact-page">
+
+      <div class="page-heading contact-heading">
+
+        <span class="page-badge">
+          📞 تواصل معنا
+        </span>
+
+        <h2>
+          إحنا موجودين لمساعدتك
+        </h2>
+
+        <p>
+          تواصل معنا على واتساب أو زور المكتبة خلال مواعيد العمل.
+        </p>
+
+      </div>
+
+
+      <div class="contact-cards">
+
+        <div class="contact-card">
+
+          <div class="contact-card-icon">
+            📍
+          </div>
+
+          <h3>
+            عنوان المكتبة
+          </h3>
+
+          <p id="address">
+            مجاورة 27 أمام ناصية المصانع
+          </p>
+
+        </div>
+
+
+        <div class="contact-card">
+
+          <div class="contact-card-icon">
+            🕛
+          </div>
+
+          <h3>
+            مواعيد العمل
+          </h3>
+
+          <p id="hoursText">
+            يوميًا من 12 صباحًا إلى 12 مساءً
+          </p>
+
+        </div>
+
+
+        <div class="contact-card">
+
+          <div class="contact-card-icon">
+            💬
+          </div>
+
+          <h3>
+            واتساب
+          </h3>
+
+          <p>
+            تواصل معنا للاستفسار عن الكتب والطلبات.
+          </p>
+
+          <a
+            id="whatsappContact"
+            class="whatsapp-big"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            تواصل واتساب
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="contact-order-box">
+
+        <div>
+          <h3>
+            لديك طلب بالفعل؟
+          </h3>
+
+          <p>
+            استخدم رقم الطلب ورقم الواتساب لمعرفة محتوياته وحالته.
+          </p>
+        </div>
+
+
+        <a
+          href="track.html"
+          class="primary-btn"
+        >
+          🔎 تتبع طلبي
+        </a>
+
+      </div>
+
+    </div>
+
   </section>
 
 </main>
 
-<aside id="cartDrawer" class="cart-drawer">
-  <div class="cart-header">
-    <h2>🛒 سلة المشتريات</h2>
 
-    <button onclick="closeCart()">×</button>
+<!-- ===============================
+     سلة المشتريات
+================================ -->
+
+<aside
+  id="cartDrawer"
+  class="cart-drawer"
+>
+
+  <div class="cart-header">
+
+    <h2>
+      🛒 سلة المشتريات
+    </h2>
+
+    <button
+      type="button"
+      onclick="closeCart()"
+      aria-label="إغلاق السلة"
+    >
+      ×
+    </button>
+
   </div>
 
-  <div id="cartItems" class="cart-items"></div>
+
+  <div
+    id="cartItems"
+    class="cart-items"
+  ></div>
+
 
   <div class="cart-footer">
+
     <div class="cart-total">
-      <span>الإجمالي</span>
-      <strong id="cartTotal">0 جنيه</strong>
+
+      <span>
+        الإجمالي
+      </span>
+
+      <strong id="cartTotal">
+        0 جنيه
+      </strong>
+
     </div>
 
-    <button class="clear-btn" onclick="clearCart()">
+
+    <button
+      type="button"
+      class="clear-btn"
+      onclick="clearCart()"
+    >
       إفراغ السلة
     </button>
 
-    <button class="checkout-btn" onclick="openCheckout()">
+
+    <button
+      type="button"
+      class="checkout-btn"
+      onclick="openCheckout()"
+    >
       إتمام الطلب
     </button>
+
   </div>
+
 </aside>
+
 
 <div
   id="overlay"
@@ -179,53 +667,138 @@
   onclick="closeCart()"
 ></div>
 
-<div id="checkoutModal" class="modal">
+
+<!-- ===============================
+     نافذة إتمام الطلب
+================================ -->
+
+<div
+  id="checkoutModal"
+  class="modal"
+>
+
   <div class="modal-content">
+
     <button
+      type="button"
       class="modal-close"
       onclick="closeCheckout()"
+      aria-label="إغلاق"
     >
       ×
     </button>
 
-    <h2>إتمام الطلب</h2>
+
+    <h2>
+      إتمام الطلب
+    </h2>
+
 
     <input
       id="customerName"
       placeholder="اسم العميل"
+      autocomplete="name"
     />
+
 
     <input
       id="customerPhone"
       placeholder="رقم الواتساب"
       type="tel"
       inputmode="numeric"
+      autocomplete="tel"
     />
+
 
     <textarea
       id="customerNotes"
       placeholder="ملاحظات"
     ></textarea>
 
+
     <p class="notice">
       ⏳ مدة تجهيز الطلب من 10 إلى 15 يوم، وسيتم التواصل معكم عند جاهزية الطلب.
     </p>
 
+
     <button
+      type="button"
       class="checkout-btn"
       onclick="submitOrder()"
     >
       تأكيد الطلب
     </button>
 
+
     <div id="orderResult"></div>
+
   </div>
+
 </div>
 
-<script src="js/config.js?v=3.0"></script>
-<script src="js/api.js?v=3.0"></script>
-<script src="js/cart.js?v=3.0"></script>
-<script src="js/app.js?v=3.0"></script>
+
+<!-- ===============================
+     تذييل الموقع
+================================ -->
+
+<footer class="site-footer">
+
+  <div class="container footer-content">
+
+    <div>
+      <strong>
+        📚 مكتبة مازن
+      </strong>
+
+      <p>
+        طلب الكتب الدراسية لجميع الصفوف بسهولة.
+      </p>
+    </div>
+
+
+    <div class="footer-links">
+
+      <button
+        type="button"
+        onclick="openSiteTabByName('home')"
+      >
+        الرئيسية
+      </button>
+
+      <button
+        type="button"
+        onclick="openSiteTabByName('books')"
+      >
+        الكتب
+      </button>
+
+      <a href="track.html">
+        تتبع الطلب
+      </a>
+
+      <button
+        type="button"
+        onclick="openSiteTabByName('contact')"
+      >
+        تواصل معنا
+      </button>
+
+    </div>
+
+  </div>
+
+</footer>
+
+
+<!-- ===============================
+     ملفات JavaScript
+================================ -->
+
+<script src="js/config.js?v=5.0"></script>
+<script src="js/api.js?v=5.0"></script>
+<script src="js/cart.js?v=5.0"></script>
+<script src="js/app.js?v=5.0"></script>
 
 </body>
+
 </html>
