@@ -15,6 +15,7 @@ async function apiRequest(action, payload = {}) {
 
     const postActions = [
       "createOrder",
+      "getOrder",
       "updateOrderStatus",
       "addBook",
       "updateBook",
@@ -51,7 +52,7 @@ async function apiRequest(action, payload = {}) {
 
 
 // ===============================
-// بيانات مؤقتة فى حالة عدم الاتصال
+// بيانات مؤقتة في حالة عدم الاتصال
 // ===============================
 
 function getOfflineData(action) {
@@ -97,6 +98,15 @@ function getOfflineData(action) {
       success: true,
       orderNumber: `${ORDER_PREFIX}-${Date.now().toString().slice(-6)}`,
       message: "تم تسجيل الطلب بنجاح"
+    };
+
+  }
+
+  if (action === "getOrder") {
+
+    return {
+      success: false,
+      message: "ميزة تتبع الطلب تحتاج اتصال بالسيرفر"
     };
 
   }
@@ -167,6 +177,15 @@ async function getBooks() {
 async function createOrder(order) {
 
   return await apiRequest("createOrder", order);
+
+}
+
+async function getOrder(orderNumber, phone) {
+
+  return await apiRequest("getOrder", {
+    orderNumber,
+    phone
+  });
 
 }
 
