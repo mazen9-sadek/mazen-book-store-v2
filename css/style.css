@@ -94,19 +94,26 @@ button:hover {
 }
 
 .logo {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
+  width: 58px;
+  height: 58px;
   border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    var(--primary),
-    var(--secondary)
-  );
-  color: white;
-  font-size: 26px;
-  font-weight: bold;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: .3s ease;
+}
+
+.logo:hover img {
+  transform: scale(1.08);
 }
 
 .brand h1 {
@@ -1462,5 +1469,217 @@ button:hover {
 
   .footer-links {
     grid-template-columns: 1fr;
+  }
+}
+/* ===============================
+   أنيميشنات خفيفة للموقع
+================================ */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes softPop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ظهور ناعم لأجزاء الصفحة */
+
+.hero-text,
+.hero-card,
+.section-title,
+.page-heading,
+.feature-card,
+.grade-card,
+.book-card,
+.contact-card,
+.contact-order-box {
+  animation: fadeUp 0.55s ease both;
+}
+
+
+/* تأخير بسيط للكروت */
+
+.feature-card:nth-child(2),
+.grade-card:nth-child(2),
+.book-card:nth-child(2),
+.contact-card:nth-child(2) {
+  animation-delay: 0.06s;
+}
+
+.feature-card:nth-child(3),
+.grade-card:nth-child(3),
+.book-card:nth-child(3),
+.contact-card:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.feature-card:nth-child(4),
+.grade-card:nth-child(4),
+.book-card:nth-child(4) {
+  animation-delay: 0.18s;
+}
+
+
+/* حركة كروت المميزات */
+
+.feature-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(37, 99, 235, 0.22);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+}
+
+
+/* حركة كروت الصفوف */
+
+.grade-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.grade-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.11);
+}
+
+
+/* حركة كروت الكتب */
+
+.book-card {
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.12);
+}
+
+.book-card:hover .book-image img {
+  transform: scale(1.04);
+}
+
+.book-image img {
+  transition: transform 0.35s ease;
+}
+
+
+/* حركة كروت التواصل */
+
+.contact-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+}
+
+
+/* حركة الأزرار */
+
+.primary-btn,
+.whatsapp-btn,
+.whatsapp-big,
+.checkout-btn,
+.cart-btn,
+.add-btn,
+.stage-tab,
+.clear-filter-btn,
+.track-button {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.primary-btn:hover,
+.whatsapp-btn:hover,
+.whatsapp-big:hover,
+.checkout-btn:hover,
+.cart-btn:hover,
+.add-btn:hover,
+.track-button:hover {
+  transform: translateY(-3px);
+}
+
+.primary-btn:active,
+.whatsapp-btn:active,
+.whatsapp-big:active,
+.checkout-btn:active,
+.cart-btn:active,
+.add-btn:active,
+.track-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+
+/* حركة اللوجو */
+
+.logo {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.06) rotate(-2deg);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+
+/* ظهور نافذة الطلب */
+
+.modal.show .modal-content {
+  animation: softPop 0.25s ease both;
+}
+
+
+/* حركة فتح السلة */
+
+.cart-drawer {
+  transition: left 0.3s ease;
+}
+
+
+/* احترام المستخدمين الذين يفضلون تقليل الحركة */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
