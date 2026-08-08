@@ -4,14 +4,36 @@
 
 async function apiRequest(action, payload = {}) {
 
-  if (!API_URL || API_URL === "PUT_YOUR_GOOGLE_SCRIPT_URL_HERE") {
-    console.warn("API_URL غير مضاف في config.js");
-    return getOfflineData(action, payload);
+  if (
+    !API_URL ||
+    API_URL === "PUT_YOUR_GOOGLE_SCRIPT_URL_HERE"
+  ) {
+    console.warn(
+      "API_URL غير مضاف في config.js"
+    );
+
+    // نسمح بالبيانات المؤقتة فقط في الحاجات غير الحساسة
+    if (
+      action === "getSettings" ||
+      action === "getBooks"
+    ) {
+      return getOfflineData(
+        action,
+        payload
+      );
+    }
+
+    return {
+      success: false,
+      message:
+        "السيرفر غير متصل حاليًا"
+    };
   }
 
   try {
 
-    const url = `${API_URL}?action=${encodeURIComponent(action)}`;
+    const url =
+      `${API_URL}?action=${encodeURIComponent(action)}`;
 
     const postActions = [
       "createOrder",
@@ -23,31 +45,49 @@ async function apiRequest(action, payload = {}) {
     ];
 
     const options = {
-      method: postActions.includes(action) ? "POST" : "GET"
+      method:
+        postActions.includes(action)
+          ? "POST"
+          : "GET"
     };
 
     if (options.method === "POST") {
-      options.body = JSON.stringify(payload);
+      options.body =
+        JSON.stringify(payload);
     }
 
-    const response = await fetch(url, options);
-    const data = await response.json();
+    const response =
+      await fetch(url, options);
 
-    console.log(action, data);
+    if (!response.ok) {
+      throw new Error(
+        `HTTP Error: ${response.status}`
+      );
+    }
+
+    const data =
+      await response.json();
+
+    console.log(
+      action,
+      data
+    );
 
     return data;
 
   } catch (error) {
 
-    console.error("API Error:", error);
+    console.error(
+      "API Error:",
+      error
+    );
 
     return {
       success: false,
-      message: "حدث خطأ أثناء الاتصال بالسيرفر"
+      message:
+        "حدث خطأ أثناء الاتصال بالسيرفر"
     };
-
   }
-
 }
 
 
@@ -63,7 +103,6 @@ function getOfflineData(action) {
       success: true,
       settings: DEFAULT_SETTINGS
     };
-
   }
 
   if (action === "getBooks") {
@@ -73,42 +112,48 @@ function getOfflineData(action) {
       books: [
         {
           rowIndex: 2,
-          grade: "الصف الأول الابتدائي",
-          name: "كتاب اللغة العربية",
+          grade:
+            "الصف الأول الابتدائي",
+          name:
+            "كتاب اللغة العربية",
           price: 120,
           image: "",
           available: "نعم"
         },
         {
           rowIndex: 3,
-          grade: "الصف الأول الابتدائي",
-          name: "كتاب الرياضيات",
+          grade:
+            "الصف الأول الابتدائي",
+          name:
+            "كتاب الرياضيات",
           price: 110,
           image: "",
           available: "نعم"
         }
       ]
     };
-
   }
+
+  // مهم جدًا:
+  // ممنوع نرجع success = true للأوردر
+  // لو السيرفر مش متصل
 
   if (action === "createOrder") {
 
     return {
-      success: true,
-      orderNumber: `${ORDER_PREFIX}-${Date.now().toString().slice(-6)}`,
-      message: "تم تسجيل الطلب بنجاح"
+      success: false,
+      message:
+        "تعذر إرسال الطلب للسيرفر. تأكد من الاتصال وحاول مرة أخرى."
     };
-
   }
 
   if (action === "getOrder") {
 
     return {
       success: false,
-      message: "ميزة تتبع الطلب تحتاج اتصال بالسيرفر"
+      message:
+        "ميزة تتبع الطلب تحتاج اتصال بالسيرفر"
     };
-
   }
 
   if (action === "getDashboard") {
@@ -125,7 +170,6 @@ function getOfflineData(action) {
         topGrades: []
       }
     };
-
   }
 
   if (
@@ -136,17 +180,17 @@ function getOfflineData(action) {
   ) {
 
     return {
-      success: true,
-      message: "تم تنفيذ العملية بنجاح"
+      success: false,
+      message:
+        "تعذر تنفيذ العملية لأن السيرفر غير متصل"
     };
-
   }
 
   return {
     success: false,
-    message: "Action غير معروف"
+    message:
+      "Action غير معروف"
   };
-
 }
 
 
@@ -156,47 +200,64 @@ function getOfflineData(action) {
 
 async function getSettings() {
 
-  const data = await apiRequest("getSettings");
+  const data =
+    await apiRequest(
+      "getSettings"
+    );
 
   return data.success
     ? data.settings
     : DEFAULT_SETTINGS;
-
 }
+
 
 async function getBooks() {
 
-  const data = await apiRequest("getBooks");
+  const data =
+    await apiRequest(
+      "getBooks"
+    );
 
   return data.success
     ? data.books
     : [];
-
 }
+
 
 async function createOrder(order) {
 
-  return await apiRequest("createOrder", order);
-
+  return await apiRequest(
+    "createOrder",
+    order
+  );
 }
 
-async function getOrder(orderNumber, phone) {
 
-  return await apiRequest("getOrder", {
-    orderNumber,
-    phone
-  });
+async function getOrder(
+  orderNumber,
+  phone
+) {
 
+  return await apiRequest(
+    "getOrder",
+    {
+      orderNumber,
+      phone
+    }
+  );
 }
+
 
 async function getDashboard() {
 
-  const data = await apiRequest("getDashboard");
+  const data =
+    await apiRequest(
+      "getDashboard"
+    );
 
   return data.success
     ? data.dashboard
     : null;
-
 }
 
 
@@ -204,13 +265,18 @@ async function getDashboard() {
 // تحديث حالة الطلب
 // ===============================
 
-async function updateOrderStatus(orderNumber, status) {
+async function updateOrderStatus(
+  orderNumber,
+  status
+) {
 
-  return await apiRequest("updateOrderStatus", {
-    orderNumber,
-    status
-  });
-
+  return await apiRequest(
+    "updateOrderStatus",
+    {
+      orderNumber,
+      status
+    }
+  );
 }
 
 
@@ -220,20 +286,28 @@ async function updateOrderStatus(orderNumber, status) {
 
 async function addBook(book) {
 
-  return await apiRequest("addBook", book);
-
+  return await apiRequest(
+    "addBook",
+    book
+  );
 }
+
 
 async function updateBook(book) {
 
-  return await apiRequest("updateBook", book);
-
+  return await apiRequest(
+    "updateBook",
+    book
+  );
 }
+
 
 async function deleteBook(rowIndex) {
 
-  return await apiRequest("deleteBook", {
-    rowIndex
-  });
-
+  return await apiRequest(
+    "deleteBook",
+    {
+      rowIndex
+    }
+  );
 }
